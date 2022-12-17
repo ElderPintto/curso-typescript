@@ -1,4 +1,4 @@
-import { NegociacaoController } from "./controllers/negociacao-controller.js";
+import { NegociacaoController } from "./controllers/NegociacaoController.js";
 
 const controller = new NegociacaoController();
 
