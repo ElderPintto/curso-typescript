@@ -9,3 +9,10 @@ if (form)
     event.preventDefault();
     controller.adiciona();
   });
+
+const btnImporta = document.querySelector(".btn-importa");
+
+if (btnImporta)
+  btnImporta.addEventListener("click", (event) => {
+    controller.importadaDados();
+  });
