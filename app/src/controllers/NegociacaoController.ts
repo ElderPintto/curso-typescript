@@ -6,7 +6,8 @@ import { NegociacaoView } from "../views/negociacoesView.js";
 import { MensagemView } from "../views/mensagemView.js";
 import { inspect } from "../decorators/inspect.js";
 import { domInjector } from "../decorators/domInjector.js";
-import { NegociacoesServices } from "../services/negociacoes-service.js";
+import { NegociacoesService } from "../services/negociacoes-service.js";
+import { imprimir } from "../utils/imprimir";
 
 export class NegociacaoController {
   @domInjector("#data")
@@ -18,15 +19,22 @@ export class NegociacaoController {
   private negociacoes = new Negociacoes();
   private negociacaoView = new NegociacaoView("#negociacoesView", true);
   private mensagemView = new MensagemView("#mensagemView");
-  private negociacoesServices = new NegociacoesServices();
+  private negociacoesService = new NegociacoesService();
   constructor() {
     this.negociacaoView.update(this.negociacoes);
   }
 
   importadaDados(): void {
-    this.negociacoesServices
+    this.negociacoesService
       .obterNegociacoesDoDia()
-      .then((negociacoesDeHoje: any) => {
+      .then((negociacoesDeHoje) => {
+        return negociacoesDeHoje.filter((negociacaoDeHoje) => {
+          return !this.negociacoes
+            .lista()
+            .some((negociacao) => negociacao.ehIgual(negociacaoDeHoje));
+        });
+      })
+      .then((negociacoesDeHoje) => {
         for (let negociacao of negociacoesDeHoje) {
           this.negociacoes.adiciona(negociacao);
         }
@@ -50,6 +58,7 @@ export class NegociacaoController {
     }
 
     this.negociacoes.adiciona(negociacao);
+    imprimir(negociacao, this.negociacoes);
     this.atualizaView();
     this.limparFormulario();
 
